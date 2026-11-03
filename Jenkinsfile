@@ -22,7 +22,12 @@ pipeline {
         }
         stage('3. Build Docker Image') {
             steps {
+                script {
+                    // Fitur Pengembangan: Mengambil 7 karakter Commit SHA Git
+                    env.GIT_COMMIT_SHORT = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                }
                 sh 'docker build -t ${REGISTRY_NAME}:${BUILD_NUMBER} .'
+                sh 'docker tag ${REGISTRY_NAME}:${BUILD_NUMBER} ${REGISTRY_NAME}:${GIT_COMMIT_SHORT}'
                 sh 'docker tag ${REGISTRY_NAME}:${BUILD_NUMBER} ${REGISTRY_NAME}:latest'
             }
         }
